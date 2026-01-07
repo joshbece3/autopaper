@@ -1,47 +1,36 @@
 #!/bin/bash
-
-# launch
-run() {
-    local dir=$1
-    local jar=$2
-    local ram=$3
-
-    echo "launching: $dir ($ram GB)"
-    cd "$dir" || exit 1
-
-    java -Xmx"${ram}G" \
-    -XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 \
-    -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch \
-    -jar "$jar" nogui
+#launch
+run(){
+local d=$1
+local j=$2
+local r=$3
+echo "booting:$d"
+cd "$d"||exit
+java -Xmx"${r}G" -XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -jar "$j" nogui
 }
-
-# input
-read -p "ram (gb): " memory
-
-# choice
-while true; do
-    read -p "server (paper/fabric): " type
-
-    case $type in
-        paper)
-            # folder
-            if [ -d "minecraft_server" ]; then
-                run "minecraft_server" "paper.jar" "$memory"
-            else
-                echo "missing: minecraft_server"
-            fi
-            break ;;
-
-        fabric)
-            # folder
-            if [ -d "fabric_server" ]; then
-                run "fabric_server" "fabric-server.jar" "$memory"
-            else
-                echo "missing: fabric_server"
-            fi
-            break ;;
-
-        *)
-            echo "pick paper or fabric" ;;
-    esac
+#input
+read -p "ram:" ram
+#choice
+while true;do
+read -p "type:" type
+case $type in
+paper)
+#folder
+if [ -d "minecraft_server" ];then
+run "minecraft_server" "paper.jar" "$ram"
+else
+echo "missing folder"
+fi
+break;;
+fabric)
+#folder
+if [ -d "fabric_server" ];then
+run "fabric_server" "fabric-server.jar" "$ram"
+else
+echo "missing folder"
+fi
+break;;
+*)
+echo "invalid";;
+esac
 done
